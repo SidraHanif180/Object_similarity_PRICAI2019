@@ -20,10 +20,18 @@ and Local Similarity to Detected Objects" publihed in Pacific Rim International 
 To run the code, first you place the pascal 2007 and Pascal 2012 datasets in the data folder and specify the path for 
 root variable in the train.m code.
  
- root  = /path/to/data
+ root  = /path/to/data/
  
  data => contain train and trest images for Pascal 2007 and 2012 datsets
+# #Pretrained model for pascal 2007and 2012 and INSTRE datasets
 
+Pretrained model for pascal 2007and 2012 and  as well as INSTRE datasets are also provided in files 
+
+pascal 2007 => 
+
+pascal 2012 =>
+
+INSTRE =>
 
 ![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/results.png)
 
