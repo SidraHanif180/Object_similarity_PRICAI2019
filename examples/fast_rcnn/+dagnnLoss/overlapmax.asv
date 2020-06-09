@@ -1,0 +1,38 @@
+classdef label  < dagnn.Layer
+  
+  methods
+    function outputs = forward(obj, inputs,params)
+        proposal = gather(inputs{2});
+        deltas = squeeze(gather(inputs{1}));
+        gtAll = inputs{3};
+%         gtAll =  gtAll{1,1};
+        %img_size = inputs{3};
+        pred_boxes = round(bbox_transform_inv(proposal', deltas'));
+        if pred_boxes(1) <1,  pred_boxes(1) = 1; end
+        if pred_boxes(2) <1, pred_boxes(2) = 1; end
+        if pred_boxes(3) > proposal(3), pred_boxes(3) = proposal(3); end
+        if pred_boxes(4) > proposal(4), pred_boxes(4) = proposal(4); end
+%         for b=1:size(pred_boxes,1)
+%             pred_boxes1(b,:) = [b, pred_boxes(b,:)];
+%         end
+       overlaps = bbox_overlap_gt_prop(gtAll,pred_boxes);
+       overlaps = max (overlaps); 
+       
+       if overlaps >= 0.5
+           overlaps = 1;
+       else 
+           overlaps =0;
+       end
+       outputs{1} = gpuArray(overlaps);
+        
+    end
+   
+
+    function [derInputs, derParams] = backward(obj, inputs,params, derOutputs)
+          derInputs = {[], []} ;
+          derParams = {};
+    end
+
+    
+  end
+end

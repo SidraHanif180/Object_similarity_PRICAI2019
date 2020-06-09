@@ -1,0 +1,159 @@
+classdef LossSmoothL1 < dagnn.Loss
+%LossSmoothL1  Smooth L1 loss
+%  `LossSmoothL1.forward({x, x0, w})` computes the smooth L1 distance 
+%  between `x` and `x0`, weighting the elements by `w`.
+%
+%  Here the smooth L1 loss between two vectors is defined as:
+%
+%     Loss = sum_i f(x_i - x0_i) w_i.
+%
+%  where f is the function (following the Faster R-CNN definition):
+%
+%              { 0.5 * sigma^2 * delta^2,         if |delta| < 1 / sigma^2,
+%   f(delta) = {
+%              { |delta| - 0.5 / sigma^2,         otherwise.
+%
+%  In practice, `x` and `x0` can pack multiple instances as 1 x 1 x C
+%  x N arrays (or simply C x N arrays).
+
+  properties
+    sigma = 1.
+    
+  end
+
+  methods
+    function outputs = forward(obj, inputs, params)
+        
+        %% Additional code
+%         predbox, target, label_class, gt_all, proposal
+          target = gather(inputs{2});
+          deltas = squeeze(gather(inputs{1}));
+          label_class = inputs{3};
+          gtAll = inputs{4};
+          proposal1 = cell2mat(inputs{5});
+            %         gtAll =  gtAll{1,1};
+            %img_size = inputs{3};
+            %%
+            pred_boxes = round(bbox_transform_inv(proposal1', deltas'));
+            for b=1:size(pred_boxes,1)
+                if pred_boxes(b,1) < 1,  pred_boxes(b,1) = 1; end
+                if pred_boxes(b,2) < 1, pred_boxes(b,2) = 1; end
+                if pred_boxes(b,3) > proposal1(3,b), pred_boxes(b,3) = proposal1(3,b); end
+                if pred_boxes(b,4) > proposal1(4,b), pred_boxes(b,4) = proposal1(4,b); end
+                %for b=1:size(pred_boxes,1)
+                
+            end
+              for k=1: size(gtAll,2)
+                gtAll_1  = gtAll{1,k}';
+                for k1 = 1: size(gtAll_1,1)                    
+%                     overlaps(k1) = bbox_overlap_gt_prop(gtAll_1(k1,:),...
+%                         pred_boxes(k,:));
+                    overlaps(k1) = bbox_overlap(gtAll_1(k1,:),...
+                        pred_boxes(k,:));
+                end
+                if label_class(k)==1
+                    I = find(overlaps(k1)==max(overlaps(k1)));
+                    target_single{k}= double(target{1,k}(:,I(1)));
+                else 
+                    target_single{k}= [0;0;0;0];
+                end
+                clear overlaps;
+             end
+        %%
+      label_class = inputs{1,3};
+      sigma2 = obj.sigma^2 ;
+      input_squeeze1 = squeeze(inputs{1});
+     delta = input_squeeze1 - cell2mat(target_single) ;
+      absDelta = abs(delta) ;
+
+      linearRegion = (absDelta > 1. / sigma2) ;
+      absDelta(linearRegion) = absDelta(linearRegion) - 0.5/sigma2 ;
+      absDelta(~linearRegion) = 0.5 * sigma2 * absDelta(~linearRegion).^2 ;
+      
+      abs_delta = absDelta(:);
+      sizedelta = size(abs_delta);
+      % Mutliply by instance weights and sum.
+%       outputs{1} = inputs{3}(:)' * absDelta(:) ;
+      outputs{1} = ones(sizedelta(1),1)'* absDelta(:) ;
+
+      % Mutliply by instance weights and sum.
+      %outputs{1} = inputs{3}(:)' * absDelta(:) ;
+      
+      % Accumulate loss statistics.
+      if obj.ignoreAverage, return; end;
+      n = obj.numAveraged ;
+      m = n + size(inputs{1},4) + 1e-25 ;
+      obj.average = (n * obj.average + gather(outputs{1})) / m ;
+%       m = n + gather(sum(inputs{3}(:))) + 1e-9 ;
+%       obj.average = (n * obj.average + gather(outputs{1})) / m ;
+      obj.numAveraged = m ;
+%        losses = gather(sum(absDelta,1));
+%        obj.allLosses = [obj.allLosses,losses];
+    end
+   
+
+    function [derInputs, derParams] = backward(obj, inputs, params, derOutputs)
+    % Function derivative:
+    %
+    %          { sigma^2 * x,             if |x| < 1 / sigma^2,
+    %  f'(x) = {
+    %          { sign(x),                 otherwise.
+      
+    %% Additional code
+%         predbox, target, label_class, gt_all, proposal
+          target = gather(inputs{2});
+          deltas = squeeze(gather(inputs{1}));
+          label_class = inputs{3};
+          gtAll = inputs{4};
+          proposal1 = cell2mat(inputs{5});
+            %         gtAll =  gtAll{1,1};
+            %img_size = inputs{3};
+            %%
+            pred_boxes = round(bbox_transform_inv(proposal1', deltas'));
+            for b=1:size(pred_boxes,1)
+                if pred_boxes(b,1) < 1,  pred_boxes(b,1) = 1; end
+                if pred_boxes(b,2) < 1, pred_boxes(b,2) = 1; end
+                if pred_boxes(b,3) > proposal1(3,b), pred_boxes(b,3) = proposal1(3,b); end
+                if pred_boxes(b,4) > proposal1(4,b), pred_boxes(b,4) = proposal1(4,b); end
+                %for b=1:size(pred_boxes,1)
+                
+            end
+              for k=1: size(gtAll,2)
+                gtAll_1  = gtAll{1,k}';
+                for k1 = 1: size(gtAll_1,1)                    
+%                     overlaps(k1) = bbox_overlap_gt_prop(gtAll_1(k1,:),...
+%                         pred_boxes(k,:));
+                    overlaps(k1) = bbox_overlap(gtAll_1(k1,:),...
+                        pred_boxes(k,:));
+                end
+                if label_class(k)==1
+                    I = find(overlaps(k1)==max(overlaps(k1)));
+                    target_single{k}= double(target{1,k}(:,I(1)));
+                else 
+                    target_single{k}= [0;0;0;0];
+                end
+                clear overlaps;
+              end
+             %%
+     label_class = inputs{1,3};
+     sigma2 = obj.sigma^2 ;
+     input_squeeze1 = squeeze(inputs{1});
+     delta = input_squeeze1 - cell2mat(target_single) ;
+     absDelta = abs(delta) ;
+     size_input1 = size (inputs{1});     
+
+      linearRegion = (absDelta > 1. / sigma2) ;
+      delta(linearRegion) = sign(delta(linearRegion));
+      delta(~linearRegion) = sigma2 * delta(~linearRegion) ;
+      %delta(:,label_class==0)=0;
+      derInputs = {reshape(delta .* derOutputs{1}, size_input1), [],[],...
+          [],[]} ;
+      derParams = {} ;
+    end
+
+    function obj = LossSmoothL1(varargin)
+      obj.load(varargin) ;
+      obj.loss = 'smoothl1';
+    end
+  end
+end
