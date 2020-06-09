@@ -27,11 +27,12 @@ root variable in the train.m code.
 
 Pretrained model for pascal 2007and 2012 and  as well as INSTRE datasets are also provided in files 
 
-pascal 2007 => 
+pascal 2007 => Model_trained_pascal_voc_2007.mat
 
-pascal 2012 =>
+pascal 2012 => Model_trained_pascal_voc_2012.mat
 
-INSTRE =>
+INSTRE => Model_trained_pascal_voc_INSTRE.mat
+
 
 ![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/results.png)
 
