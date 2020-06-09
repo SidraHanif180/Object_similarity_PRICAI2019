@@ -1,4 +1,4 @@
-# MatConvNet: CNNs for MATLAB
+# To run the traing code, we need MatConvNet: CNNs for MATLAB
 
 **MatConvNet** is a MATLAB toolbox implementing *Convolutional Neural
 Networks* (CNNs) for computer vision applications. It is simple,
