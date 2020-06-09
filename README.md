@@ -12,6 +12,10 @@ In case of compilation issues, please read first the
 issue. For general inquiries regarding network design and training
 related questions, please use the
 [Discussion forum](https://groups.google.com/d/forum/matconvnet).
-# Object_similarity_PRICAI2019
+
+# Code for PRICAI 2019
+
+This reposiitory is sharing a training and evaluation code for ou papaer "Image Retrieval with Similar Object Detection
+and Local Similarity to Detected Objects" publihed in Pacific Rim International Conference on Artificial Intelligence (PRICAI), 2019.
 
 ![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/qualitaive_acm.png)
