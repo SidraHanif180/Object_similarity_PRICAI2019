@@ -23,7 +23,7 @@ root variable in the train.m code.
  root  = /path/to/data/
  
  data => contain train and trest images for Pascal 2007 and 2012 datsets
-# #Pretrained model for pascal 2007and 2012 and INSTRE datasets
+# Pretrained model
 
 Pretrained model for pascal 2007and 2012 and  as well as INSTRE datasets are also provided in files 
 
