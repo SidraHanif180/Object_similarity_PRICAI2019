@@ -33,7 +33,14 @@ pascal 2012 => Model_trained_pascal_voc_2012.mat
 
 INSTRE => Model_trained_pascal_voc_INSTRE.mat
 
+# Evaluation
+The evalution on Pascal 2007 and 2012 dataest for the recall of top-10 correct retrieval is given in the table below :
+
 
 ![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/results.png)
+
+# Results
+
+The qualitative results on Pascal datasets are shown in figure below. The "blue" bounding box is the region of interest in query image wheras the "yellow" bounding box shows the similar regions detected in database images.
 
 ![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/qualitaive_acm.png)
