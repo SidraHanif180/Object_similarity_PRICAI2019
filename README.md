@@ -14,4 +14,4 @@ related questions, please use the
 [Discussion forum](https://groups.google.com/d/forum/matconvnet).
 # Object_similarity_PRICAI2019
 
-![img](http://i.imgur.com/qualitative_results.png)
+![img](https://github.com/SidraHanif180/Object_similarity_PRICAI2019/blob/master/qualitaive_acm.png)
