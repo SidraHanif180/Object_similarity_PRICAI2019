@@ -19,7 +19,8 @@ This repository is sharing a training and evaluation code for our papaer "Image 
 and Local Similarity to Detected Objects" publihed in Pacific Rim International Conference on Artificial Intelligence (PRICAI), 2019.
 To run the code, first you place the pascal 2007 and Pascal 2012 datasets in the data folder and specify the path for 
 root variable in the train.m code.
- # root  = /path/to/data
+ 
+ root  = /path/to/data
  data => contain train and trest images for Pascal 2007 and 2012 datsets
 
 
